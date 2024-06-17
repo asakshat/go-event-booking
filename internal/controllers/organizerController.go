@@ -55,7 +55,7 @@ func Login(c *gin.Context) {
 		MaxAge:   3600 * 24,
 		Secure:   true,
 		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	})
 	log.Printf("User %s logged in", body.Username)
 	c.JSON(http.StatusOK, gin.H{"message": "User logged in successfully"})
