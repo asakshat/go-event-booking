@@ -7,7 +7,6 @@ import (
 
 	"github.com/asakshat/go-event-booking/initializers"
 	"github.com/asakshat/go-event-booking/internal/routes"
-	"github.com/asakshat/go-event-booking/internal/services"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +35,6 @@ func main() {
 			"message": fmt.Sprintf("Server running  %s", "👨‍💻🏃"),
 		})
 	})
-	services.SendGoMail("./email_template.html")
 	routes.AuthRoutes(r)
 	routes.EventRoutes(r)
 	routes.TicketRoutes(r)
