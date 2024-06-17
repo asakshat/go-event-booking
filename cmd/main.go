@@ -7,6 +7,7 @@ import (
 
 	"github.com/asakshat/go-event-booking/initializers"
 	"github.com/asakshat/go-event-booking/internal/routes"
+	"github.com/asakshat/go-event-booking/internal/services"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +23,7 @@ func main() {
 	r.Use(gin.Recovery())
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080, https://eventbooking-go-27fd3f19d4f5.herokuapp.com/"},
+		AllowOrigins:     []string{"http://localhost:8080", "https://eventbooking-go-27fd3f19d4f5.herokuapp.com/"},
 		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH"},
 		AllowHeaders:     []string{"Origin"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -35,6 +36,7 @@ func main() {
 			"message": fmt.Sprintf("Server running  %s", "👨‍💻🏃"),
 		})
 	})
+	services.SendGoMail("./email_template.html")
 	routes.AuthRoutes(r)
 	routes.EventRoutes(r)
 	routes.TicketRoutes(r)

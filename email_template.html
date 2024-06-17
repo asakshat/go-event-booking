@@ -3,13 +3,13 @@
 <head>
     <title>Ticket Booking Confirmation</title>
 </head>
-<body>
+<body >
     <div style="text-align: center; padding: 20px; color: #444;">
         <h1 style="color: #4FBA6F;">Booking Confirmation</h1>
         <p style="font-size: 20px; color: #333;">Dear <span style="color: #4FBA6F;">{{.CustomerName}}</span>,</p>
         <p style="font-size: 18px;">Your ticket for <span style="color: #4FBA6F;">{{.EventName}}</span> on <span style="color: #4FBA6F;">{{.EventDate}}</span> at <span style="color: #4FBA6F;">{{.EventTime}}</span> located at <span style="color: #4FBA6F;">{{.EventLocation}}</span> has been confirmed.</p>
         <p style="font-size: 18px;">Attached with this email is your QR code which is required during entrance:</p>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png" alt="Your QR Code" style="width: 200px; height: 200px;"/>
+        <img src={{.QRCode}} alt="Your QR Code" style="width: 200px; height: 200px;"/>
         <p style="font-size: 18px;">Thank you for choosing our service.</p>
         <p style="font-size: 18px;">We look forward to serving you.</p>
         <p style="font-size: 16px; color: #888;">Best Regards,</p>

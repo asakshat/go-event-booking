@@ -16,6 +16,7 @@ type EventDetails struct {
 	EventTime     string
 	EventLocation string
 	Organizer     string
+	QRCode        string
 }
 
 func SendGoMail(templatePath string) {
@@ -29,6 +30,7 @@ func SendGoMail(templatePath string) {
 		EventTime:     "10:00",
 		EventLocation: "Online",
 		Organizer:     "Johnsons",
+		QRCode:        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png",
 	}
 
 	var body bytes.Buffer
