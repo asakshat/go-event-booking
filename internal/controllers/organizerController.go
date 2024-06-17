@@ -53,7 +53,7 @@ func Login(c *gin.Context) {
 		Name:     "jwt",
 		Value:    signedToken,
 		MaxAge:   3600 * 24,
-		Secure:   true,
+		Secure:   false,
 		HttpOnly: true,
 		SameSite: http.SameSiteDefaultMode,
 	})
