@@ -15,7 +15,7 @@ The "Event Booking" project is designed to provide a platform for users to book 
 ## APIs
 
 ```
-URL :- https://eventbooking-go-27fd3f19d4f5.herokuapp.com/
+URL :- https://eventbooking-go-9c6c8d14446d.herokuapp.com/
 ```
 
 ### Auth Requests
@@ -26,8 +26,7 @@ URL :- https://eventbooking-go-27fd3f19d4f5.herokuapp.com/
 > {
 > 	"username": "retrosax",
 > 	"email": "retrosax@gmail.com",
-> 	"password": "MegaMan123!",
-> 	
+> 	"password": "MegaMan123!"
 > }
 > ```
 
