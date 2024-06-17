@@ -53,9 +53,9 @@ func Login(c *gin.Context) {
 		Name:     "jwt",
 		Value:    signedToken,
 		MaxAge:   3600 * 24,
-		Secure:   false,
+		Secure:   true,
 		HttpOnly: true,
-		SameSite: http.SameSiteDefaultMode,
+		SameSite: http.SameSiteLaxMode,
 	})
 	log.Printf("User %s logged in", body.Username)
 	c.JSON(http.StatusOK, gin.H{"message": "User logged in successfully"})
