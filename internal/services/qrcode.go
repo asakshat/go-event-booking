@@ -1,15 +1,13 @@
 package services
 
 import (
-	"image/color"
-
 	"github.com/skip2/go-qrcode"
 )
 
-func GenerateQRCode(data string) ([]byte, error) {
-	err := qrcode.WriteColorFile("https://example.org", qrcode.Medium, 256, color.Black, color.White, "qr.png")
+func GenerateQRCode(token string, filename string) error {
+	err := qrcode.WriteFile(token, qrcode.Medium, 256, filename+".png")
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return nil, nil
+	return nil
 }

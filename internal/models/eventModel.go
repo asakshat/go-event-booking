@@ -18,6 +18,7 @@ type Event struct {
 	Venue         string    `gorm:"size:100"`
 	Date          time.Time `gorm:"type:date;not null"`
 	Time          string    `gorm:"size:5;not null"`
+	Price         float64   `gorm:"type:decimal(10,2);not null"`
 	TicketDetails []Ticket
 }
 

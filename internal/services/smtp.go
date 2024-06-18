@@ -9,28 +9,28 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-type EventDetails struct {
+type TicketDetails struct {
 	CustomerName  string
 	EventName     string
 	EventDate     string
 	EventTime     string
 	EventLocation string
 	Organizer     string
-	QRCode        string
+	QRCode        uint
 }
 
-func SendGoMail(templatePath string) {
+func SendGoMail(templatePath string, to string) {
 	emailHost := os.Getenv("EMAIL")
 	passwordHost := os.Getenv("PASSWORD")
 
-	event := EventDetails{
+	ticket := TicketDetails{
 		CustomerName:  "Sakshat",
 		EventName:     "Go Event Booking",
 		EventDate:     "2021-09-01",
 		EventTime:     "10:00",
 		EventLocation: "Online",
 		Organizer:     "Johnsons",
-		QRCode:        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/QR_code_for_mobile_English_Wikipedia.svg/1200px-QR_code_for_mobile_English_Wikipedia.svg.png",
+		QRCode:        1,
 	}
 
 	var body bytes.Buffer
@@ -39,14 +39,14 @@ func SendGoMail(templatePath string) {
 		fmt.Println(err)
 		return
 	}
-	err = t.Execute(&body, event)
+	err = t.Execute(&body, ticket)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", emailHost)
-	m.SetHeader("To", emailHost)
+	m.SetHeader("To", to)
 	m.SetHeader("Subject", "Ticket Purchase Confirmed!")
 	m.SetBody("text/html", body.String())
 

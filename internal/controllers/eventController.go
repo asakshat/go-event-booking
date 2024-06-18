@@ -18,9 +18,10 @@ import (
 func CreateEvent(c *gin.Context) {
 
 	userIDUint, _ := services.GetUserID(c)
-
 	timeString := c.Request.FormValue("time")
 	dateString := c.Request.FormValue("date")
+	price := c.Request.FormValue("price")
+	priceToFloat, err := strconv.ParseFloat(price, 64)
 
 	title := c.Request.FormValue("title")
 	fmt.Println("title:", title)
@@ -47,6 +48,7 @@ func CreateEvent(c *gin.Context) {
 		Venue:       c.Request.FormValue("venue"),
 		Date:        parsedDate,
 		Time:        parsedTime,
+		Price:       priceToFloat,
 	}
 
 	fileHeader, err := c.FormFile("image")
@@ -227,6 +229,7 @@ func UndoDeleteEvent(c *gin.Context) {
 	events := models.Event{}
 	events.UndoDeleteEvent(initializers.DB, c, &form)
 }
+
 func DeletePerm(c *gin.Context) {
 	userIDUint, _ := services.GetUserID(c)
 
