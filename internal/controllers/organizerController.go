@@ -27,10 +27,14 @@ func SignUp(c *gin.Context) {
 func Login(c *gin.Context) {
 	secret := os.Getenv("JWT_SECRET")
 	var body models.Organizer
-	if c.Bind(&body) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
-		return
+	if err := c.ShouldBindJSON(&body.Email); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
+	if err := c.ShouldBindJSON(&body.PasswordHash); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+	}
+	body.PasswordHash = c.PostForm("password")
 	organizer := models.Organizer{}
 	_, err := organizer.LoginFunc(initializers.DB, c, &body)
 	if err != nil {
