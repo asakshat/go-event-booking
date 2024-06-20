@@ -22,6 +22,11 @@ func CreateEvent(c *gin.Context) {
 	dateString := c.Request.FormValue("date")
 	price := c.Request.FormValue("price")
 	priceToFloat, err := strconv.ParseFloat(price, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price format"})
+		return
+
+	}
 
 	title := c.Request.FormValue("title")
 	fmt.Println("title:", title)
@@ -103,7 +108,6 @@ func CreateEvent(c *gin.Context) {
 
 func EditEvent(c *gin.Context) {
 	userIDUint, _ := services.GetUserID(c)
-
 	eventID := c.Param("event_id")
 
 	var form models.Event
@@ -119,6 +123,13 @@ func EditEvent(c *gin.Context) {
 
 	timeString := c.Request.FormValue("time")
 	dateString := c.Request.FormValue("date")
+	price := c.Request.FormValue("price")
+	priceToFloat, err := strconv.ParseFloat(price, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid price format"})
+		return
+
+	}
 
 	timeStr, err := time.Parse("15:04", timeString)
 	if err != nil {
@@ -183,6 +194,7 @@ func EditEvent(c *gin.Context) {
 	}
 
 	form.ImageURL = uploadResult.URL
+	form.Price = priceToFloat
 
 	events := models.Event{}
 	events.UpdateEvent(initializers.DB, c, &form)
