@@ -63,6 +63,7 @@ URL :- https://eventbooking-go-9c6c8d14446d.herokuapp.com/
 > date:20/09/2024
 > time:18:00
 > location:rude de canterlaan , 16
+> price:29.99
 > }
 > ```
 
@@ -76,6 +77,7 @@ URL :- https://eventbooking-go-9c6c8d14446d.herokuapp.com/
 > date:20/09/2023
 > time:19:00
 > location:rude de canterlaan , 19
+> price:19.99
 > }
 > ```
 
