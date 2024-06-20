@@ -14,8 +14,8 @@ import (
 
 func SignUp(c *gin.Context) {
 	var body models.Organizer
-	if c.Bind(&body) != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
+	if err := c.Bind(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -31,9 +31,12 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
 		return
 	}
-
 	organizer := models.Organizer{}
-	organizer.LoginFunc(initializers.DB, c, &body)
+	_, err := organizer.LoginFunc(initializers.DB, c, &body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	var org models.Organizer
 	initializers.DB.First(&org, "email = ?", body.Email)

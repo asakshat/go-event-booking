@@ -10,9 +10,9 @@ import (
 
 type Organizer struct {
 	gorm.Model
-	Username     string `gorm:"size:50;not null;unique"`
-	Email        string `gorm:"size:100;not null;unique" `
-	PasswordHash string `gorm:"size:255;not null" json:"-"`
+	Username     string `gorm:"size:50;not null;unique" `
+	Email        string `gorm:"size:100;not null;unique" binding:"required,email"`
+	PasswordHash string `gorm:"size:255;not null" json:"-" binding:"required,min=8"`
 }
 
 func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) {
