@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -45,7 +46,7 @@ func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Or
 	db.First(&organizer, "email = ?", body.Email)
 	if organizer.ID == 0 {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
-		return nil, nil
+		return nil, errors.New("user not found")
 	}
 	fmt.Println(organizer)
 	fmt.Println(body)
