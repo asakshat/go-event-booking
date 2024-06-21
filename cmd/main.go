@@ -15,6 +15,7 @@ func init() {
 	initializers.LoadEnvVariables()
 	initializers.ConnectToDB()
 	initializers.SyncDatabase()
+	initializers.InitKeys()
 }
 
 func main() {

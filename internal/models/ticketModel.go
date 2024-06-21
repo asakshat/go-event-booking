@@ -12,12 +12,11 @@ type Ticket struct {
 	gorm.Model
 	EventID    uint    `gorm:"not null"`
 	Event      Event   `gorm:"foreignKey:EventID"`
-	FirstName  string  `gorm:"size:50;not null" binding:"required"`
-	LastName   string  `gorm:"size:50;not null" binding:"required"`
-	Email      string  `gorm:"size:100;not null" binding:"required"`
-	Reference  string  `gorm:"size:255;not null"`
-	EventPrice float64 `gorm:"type:decimal(10,2);not null" binding:"required"`
-	QRCode     string  `gorm:"size:255"`
+	FirstName  string  `gorm:"size:50;not null" json:"first_name"`
+	LastName   string  `gorm:"size:50;not null"  json:"last_name"`
+	Email      string  `gorm:"size:100;not null"  json:"email"`
+	Reference  string  `gorm:"size:400;not null"`
+	EventPrice float64 `gorm:"type:decimal(10,2);not null"`
 	Paid       bool    `gorm:"default:false"`
 	Validated  bool    `gorm:"default:false"`
 	BoughtDate time.Time
@@ -40,6 +39,5 @@ func (t *Ticket) CreateTicket(db *gorm.DB, c *gin.Context, ticket *Ticket) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create ticket"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Ticket created successfully"})
 
 }
