@@ -21,7 +21,11 @@ func SignUp(c *gin.Context) {
 	}
 
 	organizer := models.Organizer{}
-	organizer.Create(initializers.DB, c, &body)
+	_, err := organizer.Create(initializers.DB, c, &body)
+	if err != nil {
+		return
+
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }

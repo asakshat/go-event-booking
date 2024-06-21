@@ -17,28 +17,29 @@ type Organizer struct {
 	PasswordHash string `gorm:"size:255;not null" json:"password"`
 }
 
-func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) {
+func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {
 	// check if user exists in the database
 	var org Organizer
 	db.First(&org, "email = ?", body.Email)
 	if org.ID != 0 {
-		c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
-		return
+		c.JSON(http.StatusConflict, gin.H{"error": "Failed to create user. Email already exists"})
+		return nil, errors.New("email already exists")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.PasswordHash), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
-		return
+		return nil, err
 	}
 
 	organizer := Organizer{Username: body.Username, Email: body.Email, PasswordHash: string(hash)}
 
 	result := db.Create(&organizer)
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create user. Username or email already exists"})
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create user. Username already exists"})
+		return nil, result.Error
 	}
+	return &organizer, nil
 }
 
 func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {
