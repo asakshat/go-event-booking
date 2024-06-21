@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -14,8 +15,8 @@ import (
 
 func SignUp(c *gin.Context) {
 	var body models.Organizer
-	if err := c.Bind(&body); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
 		return
 	}
 
@@ -27,21 +28,17 @@ func SignUp(c *gin.Context) {
 func Login(c *gin.Context) {
 	secret := os.Getenv("JWT_SECRET")
 	var body models.Organizer
-	if err := c.ShouldBindJSON(&body.Email); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	if c.Bind(&body) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
+		return
 	}
-	if err := c.ShouldBindJSON(&body.PasswordHash); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	fmt.Println(body)
 
-	}
-	body.PasswordHash = c.PostForm("password")
 	organizer := models.Organizer{}
 	_, err := organizer.LoginFunc(initializers.DB, c, &body)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	var org models.Organizer
 	initializers.DB.First(&org, "email = ?", body.Email)
 

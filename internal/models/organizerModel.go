@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,9 +11,9 @@ import (
 
 type Organizer struct {
 	gorm.Model
-	Username     string `gorm:"size:50;not null;unique" `
-	Email        string `gorm:"size:100;not null;unique" binding:"required,email"`
-	PasswordHash string `gorm:"size:255;not null" json:"-" binding:"required,min=8"`
+	Username     string `gorm:"size:50;not null;unique" json:"username"`
+	Email        string `gorm:"size:100;not null;unique" json:"email"`
+	PasswordHash string `gorm:"size:255;not null" json:"password"`
 }
 
 func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) {
@@ -34,28 +35,24 @@ func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) {
 
 	result := db.Create(&organizer)
 	if result.Error != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create user"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create user. Username or email already exists"})
 		return
 	}
 }
 
 func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {
-	organizer := Organizer{Email: body.Email, PasswordHash: body.PasswordHash}
-	result := db.Where("email = $1 ", body.Email).First(&organizer)
-	if result.Error != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User or Email  not found"})
-		return nil, result.Error
+	var organizer Organizer
+	db.First(&organizer, "email = ?", body.Email)
+	if organizer.ID == 0 {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+		return nil, nil
 	}
-
+	fmt.Println(organizer)
+	fmt.Println(body)
 	err := bcrypt.CompareHashAndPassword([]byte(organizer.PasswordHash), []byte(body.PasswordHash))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
-		return nil, result.Error
+		return nil, err
 	}
-	return nil, result.Error
-}
-func (o *Organizer) GetLoggedUser(c *gin.Context) {
-	// Get the user from the context
-	user, _ := c.Get("user")
-	c.JSON(http.StatusOK, gin.H{"user": user})
+	return &organizer, nil
 }
