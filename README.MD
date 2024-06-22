@@ -12,18 +12,18 @@ This is the starting template for the collaborative project "Event Booking".
 
 The "Event Booking" project is designed to provide a platform for users to book events.
 
-### Features for  v1 (CRUD)
+### Features for v1 (CRUD)
 
- - [x] Auth functions
- - [x] Post , Edit and Delete functions
- - [x] Buying Tickets
-- [ ] Sending QR through email for confirmation and validation
-- [ ]  Function to validate QR code
+- [x] Auth functions
+- [x] Post , Edit and Delete functions
+- [x] Buying Tickets
+- [x] Sending QR through email for confirmation and validation
+- [ ] Function to validate QR code
 
+### Goals for v2
 
-### Goals for v2 
-- [ ]  Change email & password
-- [ ]  Setting early bird prices and normal prices
+- [ ] Change email & password
+- [ ] Setting early bird prices and normal prices
 - [ ] Admin panel for analytics (i.e table showing the information about bought tickets)
 
 ## APIs
@@ -123,4 +123,14 @@ URL :- https://eventbooking-go-9c6c8d14446d.herokuapp.com/
 >
 > ```
 > Get all events
+> ```
+
+> Post /api/ticket/:event_id
+>
+> ```json
+> {
+> 	"first_name": "Sakshat",
+> 	"last_name": "Adhikari",
+> 	"email": "asakshat453@gmail.com"
+> }
 > ```
