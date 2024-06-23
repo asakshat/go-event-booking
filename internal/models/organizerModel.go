@@ -46,18 +46,19 @@ func EmailValidate(email string) error {
 	if len(parts) != 2 {
 		return errors.New("invalid email format")
 	}
-	username, domain := parts[0], parts[1]
+	_, domain := parts[0], parts[1]
+
+	ret, err := verifier.Verify(email)
+	if err != nil {
+		fmt.Println("verify email address failed, error is: ", err)
+		return err
+	}
 
 	if verifier.IsDisposable(domain) {
 		fmt.Printf("%s is a disposable domain\n", domain)
 		return errors.New("disposable email domain not allowed")
 	}
-	ret, err := verifier.CheckSMTP(domain, username)
-	if err != nil {
-		fmt.Println("please use a valid email , smtp check failed: ", err)
-		return err
-	}
-	fmt.Println("smtp validation result: ", ret)
+	fmt.Println(ret)
 
 	return nil
 
