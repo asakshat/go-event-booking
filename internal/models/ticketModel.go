@@ -27,8 +27,10 @@ type TicketDetails struct {
 	Organizer     string
 	EventDate     string
 	EventTime     string
+	EventTitle    string
 	EventLocation string
 	FirstName     string
+	LastName      string
 	Email         string
 	QRCodePath    string
 }

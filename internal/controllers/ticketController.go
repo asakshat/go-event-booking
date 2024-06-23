@@ -56,12 +56,14 @@ func BuyTicket(c *gin.Context) {
 		EventDate:     formattedDate,
 		EventTime:     event.Time,
 		FirstName:     ticket.FirstName,
+		EventTitle:    event.Title,
+		LastName:      ticket.LastName,
 		EventLocation: event.Location,
 		Email:         ticket.Email,
 		QRCodePath:    qrpath,
 	}
 
-	templatePath := "./email_template.html"
+	templatePath := "./index.html"
 	services.SendGoMail(templatePath, ticketDetails)
 
 	if err := os.Remove(qrpath); err != nil {

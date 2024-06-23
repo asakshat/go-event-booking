@@ -29,7 +29,7 @@ func SendGoMail(templatePath string, ticket models.TicketDetails) {
 	m.SetHeader("To", ticket.Email)
 	m.SetHeader("Subject", "Ticket Purchase Confirmed!")
 	m.SetBody("text/html", body.String())
-	m.Attach(ticket.QRCodePath)
+	m.Embed(ticket.QRCodePath)
 
 	d := gomail.NewDialer("smtp.gmail.com", 587, emailHost, passwordHost)
 

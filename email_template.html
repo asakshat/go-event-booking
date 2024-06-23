@@ -13,6 +13,9 @@
         
         <p style="font-size: 18px;color: #f0f0f0;">Your ticket for <span style="color: #BB86FC;">{{.EventName}}</span> on <span style="color: #BB86FC;">{{.EventDate}}</span> at <span style="color: #BB86FC;">{{.EventTime}}</span> located at <span style="color: #BB86FC;">{{.EventLocation}}</span> has been confirmed.</p>
         <p style="font-size: 18px;color: #f0f0f0;">Attached with this email is your QR code which is required during entrance:</p>
+        <div style="padding: 20px;">
+            <img src="cid:{{.QRCodePath}}" alt="QR Code" style="max-width: 200px;">
+        </div>
       
         <p style="font-size: 18px;color: #f0f0f0;">Thank you for choosing our service.</p>
         <p style="font-size: 18px;color: #f0f0f0;">We look forward to serving you.</p>
