@@ -17,7 +17,7 @@ func BuyTicket(c *gin.Context) {
 	event_id := c.Params.ByName("event_id")
 
 	var event models.Event
-	initializers.DB.Where("id = ?", event_id).First(&event)
+	initializers.DB.Preload("Organizer").Where("id = ?", event_id).First(&event)
 
 	var ticket models.Ticket
 	if err := c.Bind(&ticket); err != nil {
@@ -62,8 +62,10 @@ func BuyTicket(c *gin.Context) {
 		Email:         ticket.Email,
 		QRCodePath:    qrpath,
 	}
+	fmt.Println(event.Organizer.Username)
+	templatePath := "./html/ticket.html"
+	fmt.Println(ticketDetails.Organizer)
 
-	templatePath := "./index.html"
 	services.SendGoMail(templatePath, ticketDetails)
 
 	if err := os.Remove(qrpath); err != nil {

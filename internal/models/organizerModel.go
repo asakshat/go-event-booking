@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -10,6 +11,7 @@ import (
 
 	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/gin-gonic/gin"
+	"github.com/sethvargo/go-password/password"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -187,6 +189,14 @@ func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) (*Organ
 	}
 
 	return &organizer, nil
+}
+
+func ForgetPass(newpass string) string {
+	res, err := password.Generate(20, 4, 4, false, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return res
 }
 
 func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {

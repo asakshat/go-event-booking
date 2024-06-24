@@ -129,6 +129,8 @@ Get all events
 
 POST /api/ticket/:event_id
 
-```
-Buy tickets
+```json
+	"first_name":"Denis",
+    "last_name":"M",
+    "email":"asakshat453@gmail.com"
 ```

@@ -24,10 +24,12 @@ func SignUp(c *gin.Context) {
 	_, err := organizer.Create(initializers.DB, c, &body)
 	if err != nil {
 		return
-
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
+}
+func ForgetPassword(c *gin.Context) {
+
 }
 func Login(c *gin.Context) {
 	secret := os.Getenv("JWT_SECRET")
