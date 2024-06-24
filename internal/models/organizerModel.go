@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -11,7 +10,6 @@ import (
 
 	emailverifier "github.com/AfterShip/email-verifier"
 	"github.com/gin-gonic/gin"
-	"github.com/sethvargo/go-password/password"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -34,9 +32,8 @@ type EmailVerification struct {
 	gorm.Model
 	OrganizerID uint      `gorm:"not null"`
 	Email       string    `gorm:"size:100;not null;unique" json:"email"`
-	Token       string    `gorm:"size:20;not null" json:"token"`
+	Token       string    `gorm:"size:255;not null" json:"token"`
 	ExpiresAt   time.Time `gorm:"not null"`
-	Type        string    `gorm:"size:20;not null"`
 	Sent        bool      `gorm:"default:false"`
 	Organizer   Organizer `gorm:"foreignKey:OrganizerID"`
 }
@@ -191,17 +188,14 @@ func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) (*Organ
 	return &organizer, nil
 }
 
-func GeneratePasswordAndHash(newpass string) string {
-	res, err := password.Generate(20, 4, 4, false, false)
-	if err != nil {
-		log.Fatal(err)
-	}
-	hash, err := bcrypt.GenerateFromPassword([]byte(res), bcrypt.DefaultCost)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(hash)
+func (e *EmailVerification) CreateEmailVerData(db *gorm.DB, c *gin.Context, body *EmailVerification) error {
 
+	result := db.Create(&body)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to create email verification data"})
+		return result.Error
+	}
+	return nil
 }
 
 func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {

@@ -38,6 +38,12 @@ func SendGoMail(templatePath string, ticket models.TicketDetails) {
 	}
 }
 
+// func SendVerificationEmail(email string, link string) string {
+// 	emailHost := os.Getenv("EMAIL")
+// 	passwordHost := os.Getenv("PASSWORD")
+
+// }
+
 func PasswordResetMail(templatePath string, email string, token string) {
 	emailHost := os.Getenv("EMAIL")
 	passwordHost := os.Getenv("PASSWORD")

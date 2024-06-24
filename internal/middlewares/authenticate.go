@@ -1,8 +1,11 @@
 package middlewares
 
 import (
+	"net/http"
 	"os"
 
+	"github.com/asakshat/go-event-booking/initializers"
+	"github.com/asakshat/go-event-booking/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -40,5 +43,28 @@ func Authenticate() gin.HandlerFunc {
 
 		c.Set("userID", claims["sub"])
 		c.Next()
+	}
+}
+
+func RequireEmailVerified() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - User ID not found"})
+			c.Abort()
+			return
+		}
+
+		var user models.Organizer
+		initializers.DB.First(&user, "id = ?", userID)
+
+		if !user.IsVerfied {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Email not verified. Please verify your email to continue"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+
 	}
 }

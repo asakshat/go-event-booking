@@ -20,32 +20,68 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
-	organizer := models.Organizer{}
-	_, err := organizer.Create(initializers.DB, c, &body)
+	var organizer models.Organizer
+	updatedOrg, err := organizer.Create(initializers.DB, c, &body)
+	if err != nil {
+		return
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": updatedOrg.ID,
+		"exp": time.Now().Add(time.Hour * 24).Unix(),
+	})
+	signedToken, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		log.Printf("Error signing token: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
+		return
+
+	}
+	fmt.Println("Organizer ID: ", updatedOrg.ID)
+	verifyDetails := models.EmailVerification{
+		OrganizerID: updatedOrg.ID,
+		Email:       body.Email,
+		Token:       signedToken,
+		ExpiresAt:   time.Now().Add(time.Hour * 24),
+		Sent:        false,
+	}
+	err = verifyDetails.CreateEmailVerData(initializers.DB, c, &verifyDetails)
 	if err != nil {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
-func ForgetPassword(c *gin.Context) {
-	var requestBody struct {
-		Email string `json:"email"`
-	}
-	if err := c.BindJSON(&requestBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-		return
-	}
-	var org models.Organizer
-	initializers.DB.First(&org, "email = ?", requestBody.Email)
-	if org.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-		return
-	}
-	token := models.GeneratePasswordAndHash(requestBody.Email)
-	initializers.DB.Model(&org).Update("PasswordHash", token)
 
-}
+// func ForgetPassword(c *gin.Context) {
+// 	var requestBody struct {
+// 		Email string `json:"email" binding:"required"`
+// 	}
+// 	if err := c.BindJSON(&requestBody); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+// 		return
+// 	}
+// 	var org models.Organizer
+// 	initializers.DB.First(&org, "email = ?", requestBody.Email)
+// 	if org.ID == 0 {
+// 		c.JSON(http.StatusNotFound, gin.H{"error": "The email does not exist in our database"})
+// 		return
+// 	}
+
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+// 		"sub": org.ID,
+// 		"exp": time.Now().Add(time.Hour * 24).Unix(),
+// 	})
+// 	secret := os.Getenv("JWT_SECRET")
+// 	signedToken, err := token.SignedString([]byte(secret))
+// 	if err != nil {
+// 		log.Printf("Error signing token: %v", err)
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
+// 		return
+// 	}
+
+// 	resetLink := fmt.Sprintf("http://localhost:9000/reset-password?username=%s&token=%s", org.Username, signedToken)
+
+// }
+
 func Login(c *gin.Context) {
 	secret := os.Getenv("JWT_SECRET")
 	var body models.Organizer
