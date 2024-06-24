@@ -17,9 +17,7 @@ import (
 var (
 	verifier = emailverifier.
 		NewVerifier().
-		EnableAutoUpdateDisposable().
-		EnableSMTPCheck().
-		DisableCatchAllCheck()
+		EnableAutoUpdateDisposable()
 )
 
 type Organizer struct {
@@ -52,6 +50,11 @@ func EmailValidate(email string) error {
 	if err != nil {
 		fmt.Println("verify email address failed, error is: ", err)
 		return err
+	}
+
+	if !ret.Syntax.Valid {
+		fmt.Println("email address syntax is invalid")
+		return errors.New("invalid email syntax")
 	}
 
 	if verifier.IsDisposable(domain) {
