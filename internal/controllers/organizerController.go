@@ -29,6 +29,21 @@ func SignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
 func ForgetPassword(c *gin.Context) {
+	var requestBody struct {
+		Email string `json:"email"`
+	}
+	if err := c.BindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	var org models.Organizer
+	initializers.DB.First(&org, "email = ?", requestBody.Email)
+	if org.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	token := models.GeneratePasswordAndHash(requestBody.Email)
+	initializers.DB.Model(&org).Update("PasswordHash", token)
 
 }
 func Login(c *gin.Context) {

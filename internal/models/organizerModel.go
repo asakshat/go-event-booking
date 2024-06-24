@@ -191,12 +191,17 @@ func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) (*Organ
 	return &organizer, nil
 }
 
-func ForgetPass(newpass string) string {
+func GeneratePasswordAndHash(newpass string) string {
 	res, err := password.Generate(20, 4, 4, false, false)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return res
+	hash, err := bcrypt.GenerateFromPassword([]byte(res), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(hash)
+
 }
 
 func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Organizer, error) {
