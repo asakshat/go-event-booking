@@ -1,6 +1,4 @@
-# Event Booking
-
-This is the starting template for the collaborative project "Event Booking".
+# Event Booking Documentation
 
 ## Authors
 
@@ -15,7 +13,7 @@ The "Event Booking" project is designed to provide a platform for users to book 
 ### Features for v1 (CRUD)
 
 - [x] Auth functions
-- [x] Post , Edit and Delete functions
+- [x] Post, Edit, and Delete functions
 - [x] Buying Tickets
 - [x] Sending QR through email for confirmation and validation
 - [ ] Function to validate QR code
@@ -28,109 +26,109 @@ The "Event Booking" project is designed to provide a platform for users to book 
 
 ## APIs
 
-```
-URL :- https://eventbooking-go-9c6c8d14446d.herokuapp.com/
-```
+Base URL: `https://eventbooking-go-9c6c8d14446d.herokuapp.com/`
 
 ### Auth Requests
 
-> Post /api/signup
->
-> ```json
-> {
-> 	"username": "retrosax",
-> 	"email": "retrosax@gmail.com",
-> 	"password": "MegaMan123!"
-> }
-> ```
+#### POST /api/signup
 
-> Post /api/login
->
-> ```json
-> {
-> 	"email": "retrosax@gmail.com",
-> 	"password": "MegaMan123!"
-> }
-> ```
+Registers a new user.
 
-> Post /api/logout
->
-> ```
-> Logs out user
-> ```
+```json
+{
+	"username": "retrosax",
+	"email": "retrosax@gmail.com",
+	"password": "MegaMan123!"
+}
+```
 
-> Post api/logged
->
-> ```
-> Get the user details of the currently logged in user
-> ```
+Post /api/login
+
+```json
+{
+	"email": "retrosax@gmail.com",
+	"password": "MegaMan123!"
+}
+```
+
+Post /api/logout
+
+```
+Logs out user
+```
+
+Post api/logged
+
+```
+ Get the user details of the currently logged in user
+```
 
 ### Event Routes
 
-> Post /api/event/create # (with form-data)
->
-> ```
-> {
-> title:Gopher
-> description:Gopher description
-> venue:BeCode
-> date:20/09/2024
-> time:18:00
-> location:rude de canterlaan , 16
-> price:29.99
-> }
-> ```
+Post /api/event/create # (with form-data)
 
-> PUT /api/event/update/:event_id #(with form data)
->
-> ```
-> {
-> title:Gopherrrrss
-> description:Gopher descriptionsss
-> venue:BeCodesss
-> date:20/09/2023
-> time:19:00
-> location:rude de canterlaan , 19
-> price:19.99
-> }
-> ```
+```json
+{
+title:Gopher
+description:Gopher  description
+venue:BeCode
+date:20/09/2024
+time:18:00
+location:rude  de  canterlaan  ,  16
+price:29.99
+image:file
+}
+```
 
-> Delete /api/event/delete/:event_id
->
-> ```
-> Deletes event ( not permanent)
-> ```
+PUT /api/event/update/:event_id #(with form data)
 
-> PATCH /api/event/undo-delete/:event_id
->
-> ```
-> Undo the deleted event
-> ```
+```json
+{
+title:Gopherrrrss
+description:Gopher descriptionsss
+venue:BeCodesss
+date:20/09/2023
+time:19:00
+location:rude de canterlaan , 19
+price:19.99
+image:file
+}
+```
 
-> Delete /api/event/delete_perm/:event_id
->
-> ```
-> Deletes event permanently
-> ```
+Delete /api/event/delete/:event_id
 
-> GET /api/event/:event_id
->
-> ```
-> Get event by event id
-> ```
+```
+Deletes event ( not permanent)
+```
 
-> GET /api/event
->
-> ```
-> Get all events
-> ```
+PATCH /api/event/undo-delete/:event_id
 
-> Post /api/ticket/:event_id
->
-> ```json
-> {
-> 	"first_name": "Sakshat",
-> 	"last_name": "Adhikari",
-> 	"email": "asakshat453@gmail.com"
-> }
-> ```
+```
+Undo the deleted event
+```
+
+Delete /api/event/delete_perm/:event_id
+
+```
+Deletes event permanently
+```
+
+GET /api/event/:event_id
+
+```
+Get event by event id
+```
+
+GET /api/event
+
+```
+Get all events
+```
+
+### Ticket Routes
+
+POST /api/ticket/:event_id
+
+```
+Buy tickets
+```
