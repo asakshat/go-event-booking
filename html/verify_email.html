@@ -5,15 +5,14 @@
     <title>Email Verification</title>
 </head>
 
-<body onload="document.getElementById('verificationForm').submit();">
-    <form id="verificationForm" action="https://eventbooking-go-9c6c8d14446d.herokuapp.com/api/verify-email"
-        method="POST" style="display:none;">
-        <input type="hidden" name="token" value="{{.URL}}" />
-        <!-- You can add more hidden fields here if needed -->
-        <input type="submit" value="Verify Email" />
+<body>
+    <form id="verificationForm" method="POST" style="display:block;">
+        <!-- No need for a hidden input for the token anymore -->
+        <button type="submit">Submit</button>
     </form>
     <script>
-        // If you want to add a delay or additional JavaScript, you can do so here
+        // Assuming {{.URL}} is the token value you want to append
+        document.getElementById('verificationForm').action = "https://eventbooking-go-9c6c8d14446d.herokuapp.com/api/verify-email/" + "{{.URL}}";
     </script>
 </body>
 
