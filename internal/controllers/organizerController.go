@@ -49,6 +49,8 @@ func SignUp(c *gin.Context) {
 		return
 	}
 
+	// send email to user
+
 }
 
 // func ForgetPassword(c *gin.Context) {
