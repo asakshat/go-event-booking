@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 	"unicode"
 
 	emailverifier "github.com/AfterShip/email-verifier"
@@ -33,7 +32,6 @@ type EmailVerification struct {
 	OrganizerID uint      `gorm:"not null"`
 	Email       string    `gorm:"size:100;not null;unique" json:"email"`
 	Token       string    `gorm:"size:255;not null" json:"token"`
-	ExpiresAt   time.Time `gorm:"not null"`
 	Sent        bool      `gorm:"default:false"`
 	Organizer   Organizer `gorm:"foreignKey:OrganizerID"`
 }

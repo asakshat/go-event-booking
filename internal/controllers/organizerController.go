@@ -9,6 +9,7 @@ import (
 
 	"github.com/asakshat/go-event-booking/initializers"
 	"github.com/asakshat/go-event-booking/internal/models"
+	"github.com/asakshat/go-event-booking/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -27,29 +28,61 @@ func SignUp(c *gin.Context) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": updatedOrg.ID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 	signedToken, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		log.Printf("Error signing token: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
 		return
-
 	}
 	fmt.Println("Organizer ID: ", updatedOrg.ID)
 	verifyDetails := models.EmailVerification{
 		OrganizerID: updatedOrg.ID,
 		Email:       body.Email,
 		Token:       signedToken,
-		ExpiresAt:   time.Now().Add(time.Hour * 24),
 		Sent:        false,
 	}
 	err = verifyDetails.CreateEmailVerData(initializers.DB, c, &verifyDetails)
 	if err != nil {
 		return
 	}
+	var email models.EmailVerification
+	initializers.DB.First(&email, "organizer_id = ?", updatedOrg.ID)
+	err = services.SendVerificationEmail(email)
+	if err != nil {
+		fmt.Println(err)
+		return
 
-	// send email to user
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "User created successfully. Please check your email and verify your account to use other features"})
+}
+
+func VerifyEmail(c *gin.Context) {
+	token := c.Query("token")
+	if token == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is required"})
+		return
+	}
+	var verifydetails models.EmailVerification
+	initializers.DB.First(&verifydetails, "token = ?", token)
+	if verifydetails.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "No verification data found"})
+		return
+	}
+	if token != verifydetails.Token {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is invalid"})
+		return
+	}
+
+	var userdetails models.Organizer
+	err := initializers.DB.First(&userdetails, "id = ?", verifydetails.OrganizerID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	userdetails.IsVerfied = true
+	initializers.DB.Save(&userdetails)
+	c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
 
 }
 
