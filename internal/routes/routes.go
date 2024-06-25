@@ -10,6 +10,7 @@ import (
 func AuthRoutes(r *gin.Engine) {
 	r.POST("/api/signup", controllers.SignUp)
 	r.POST("/api/login", controllers.Login)
+	r.POST("/api/verify-email/:token", controllers.VerifyEmail)
 
 	authRoutes := r.Group("/")
 	authRoutes.Use(middlewares.Authenticate())

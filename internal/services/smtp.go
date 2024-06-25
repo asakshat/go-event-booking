@@ -55,7 +55,7 @@ func SendVerificationEmail(verifyemail models.EmailVerification) error {
 		return err
 	}
 	emailData := EmailData{
-		URL: fmt.Sprintf("http://localhost:8080/verify-email?token=%s", verifyemail.Token),
+		URL: fmt.Sprintf("https://eventbooking-go-9c6c8d14446d.herokuapp.com/api/verify-email?token=%s", verifyemail.Token),
 	}
 	err = t.Execute(&body, emailData)
 	if err != nil {

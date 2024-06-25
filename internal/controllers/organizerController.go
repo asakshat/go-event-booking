@@ -58,7 +58,7 @@ func SignUp(c *gin.Context) {
 }
 
 func VerifyEmail(c *gin.Context) {
-	token := c.Query("token")
+	token := c.Param("token")
 	if token == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is required"})
 		return
