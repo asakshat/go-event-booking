@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -49,6 +50,7 @@ func Authenticate() gin.HandlerFunc {
 func RequireEmailVerified() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, exists := c.Get("userID")
+		fmt.Println("userID: ", userID)
 		if !exists {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - User ID not found"})
 			c.Abort()
