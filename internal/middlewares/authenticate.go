@@ -56,7 +56,12 @@ func RequireEmailVerified() gin.HandlerFunc {
 		}
 
 		var user models.Organizer
-		initializers.DB.First(&user, "id = ?", userID)
+		result := initializers.DB.First(&user, "id = ?", userID)
+		if result.Error != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+			c.Abort()
+			return
+		}
 
 		if !user.IsVerfied {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Email not verified. Please verify your email to continue"})
