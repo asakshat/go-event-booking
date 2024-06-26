@@ -21,9 +21,10 @@ var (
 
 type Organizer struct {
 	gorm.Model
-	Username     string `gorm:"size:50;not null;unique" json:"username"`
-	Email        string `gorm:"size:100;not null;unique" json:"email"`
-	PasswordHash string `gorm:"size:255;not null" json:"password"`
+	Username     string `gorm:"size:50;not null;unique" `
+	Email        string `gorm:"size:100;not null;unique" `
+	PasswordHash string `gorm:"size:255;not null" json:"-"`
+	Password     string `json:"password"`
 	IsVerfied    bool   `gorm:"default:false"`
 }
 
@@ -163,13 +164,13 @@ func (o *Organizer) Create(db *gorm.DB, c *gin.Context, body *Organizer) (*Organ
 
 	}
 
-	err = PasswordValidate(body.PasswordHash)
+	err = PasswordValidate(body.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return nil, err
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(body.PasswordHash), bcrypt.DefaultCost)
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
 		return nil, err
@@ -203,9 +204,8 @@ func (o *Organizer) LoginFunc(db *gorm.DB, c *gin.Context, body *Organizer) (*Or
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
 		return nil, errors.New("user not found")
 	}
-	fmt.Println(organizer)
-	fmt.Println(body)
-	err := bcrypt.CompareHashAndPassword([]byte(organizer.PasswordHash), []byte(body.PasswordHash))
+
+	err := bcrypt.CompareHashAndPassword([]byte(organizer.PasswordHash), []byte(body.Password))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid password"})
 		return nil, err

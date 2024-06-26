@@ -6,14 +6,8 @@
 </head>
 
 <body>
-    <form id="verificationForm" method="POST" style="display:block;">
-        <!-- No need for a hidden input for the token anymore -->
-        <button type="submit">Submit</button>
-    </form>
-    <script>
-        // Assuming {{.URL}} is the token value you want to append
-        document.getElementById('verificationForm').action = "https://eventbooking-go-9c6c8d14446d.herokuapp.com/api/verify-email/" + "{{.URL}}";
-    </script>
+    <p>To verify your email, please click the link below:</p>
+    <a href="{{.URL}}" target="_blank">Verify Email</a>
 </body>
 
 </html>

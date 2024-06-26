@@ -58,24 +58,28 @@ func SignUp(c *gin.Context) {
 }
 
 func VerifyEmail(c *gin.Context) {
-	token := c.Param("token")
-	if token == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is required"})
+	type TokenPayload struct {
+		Token string `json:"token" binding:"required"`
+	}
+	var token TokenPayload
+	if err := c.ShouldBindJSON(&token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
 		return
 	}
 	var verifydetails models.EmailVerification
-	initializers.DB.First(&verifydetails, "token = ?", token)
+	initializers.DB.First(&verifydetails, "token = ?", token.Token)
 	if verifydetails.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"error": "No verification data found"})
 		return
 	}
-	if token != verifydetails.Token {
+	if token.Token != verifydetails.Token {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is invalid"})
 		return
 	}
 
 	var userdetails models.Organizer
-	err := initializers.DB.First(&userdetails, "id = ?", verifydetails.OrganizerID)
+	err := initializers.DB.First(&userdetails, "id = ?", verifydetails.OrganizerID).Error
+	fmt.Println(verifydetails.OrganizerID)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
@@ -124,7 +128,6 @@ func Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid body"})
 		return
 	}
-	fmt.Println(body)
 
 	organizer := models.Organizer{}
 	_, err := organizer.LoginFunc(initializers.DB, c, &body)

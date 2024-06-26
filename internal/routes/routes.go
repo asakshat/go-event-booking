@@ -10,7 +10,7 @@ import (
 func AuthRoutes(r *gin.Engine) {
 	r.POST("/api/signup", controllers.SignUp)
 	r.POST("/api/login", controllers.Login)
-	r.POST("/api/verify-email/:token", controllers.VerifyEmail)
+	r.POST("/api/verify-email", controllers.VerifyEmail)
 
 	authRoutes := r.Group("/")
 	authRoutes.Use(middlewares.Authenticate())
@@ -25,7 +25,7 @@ func EventRoutes(r *gin.Engine) {
 	r.GET("/api/event", controllers.GetAllEvents)
 
 	eventRoutes := r.Group("/api/event")
-	eventRoutes.Use(middlewares.Authenticate())
+	eventRoutes.Use(middlewares.Authenticate(), middlewares.RequireEmailVerified())
 	{
 		eventRoutes.POST("/create", controllers.CreateEvent)
 		// eventRoutes.GET("/:id", controllers.GetEvent)
