@@ -55,7 +55,7 @@ func SendVerificationEmail(verifyemail models.EmailVerification) error {
 		return err
 	}
 	emailData := EmailData{
-		URL: fmt.Sprintf("http://localhost:8080/verify-email?token=%s", verifyemail.Token),
+		URL: fmt.Sprintf("http://localhost:8080/user/verify-email?token=%s", verifyemail.Token),
 	}
 	err = t.Execute(&body, emailData)
 	if err != nil {
@@ -76,29 +76,46 @@ func SendVerificationEmail(verifyemail models.EmailVerification) error {
 
 }
 
-func PasswordResetMail(templatePath string, email string, token string) {
+func PasswordResetMail(resetmodel models.EmailVerification) error {
 	emailHost := os.Getenv("EMAIL")
 	passwordHost := os.Getenv("PASSWORD")
+	if emailHost == "" || passwordHost == "" {
+		return fmt.Errorf("email or password environment variable is not set")
+	}
+
+	type EmailData struct {
+		URL string
+	}
 
 	var body bytes.Buffer
-	t, err := template.ParseFiles(templatePath)
+	t, err := template.ParseFiles("./html/reset_password.html")
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Println("Error parsing template:", err)
+		return err
 	}
-	err = t.Execute(&body, token)
+
+	emailData := EmailData{
+		URL: fmt.Sprintf("http://localhost:8080/user/forgot-password?email=%s&token=%s", resetmodel.Email, resetmodel.Token),
+	}
+
+	err = t.Execute(&body, emailData)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error executing template:", err)
+		return err
 	}
+
 	m := gomail.NewMessage()
 	m.SetHeader("From", emailHost)
-	m.SetHeader("To", email)
+	m.SetHeader("To", resetmodel.Email)
 	m.SetHeader("Subject", "Password Reset")
 	m.SetBody("text/html", body.String())
 
 	d := gomail.NewDialer("smtp.gmail.com", 587, emailHost, passwordHost)
 
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		fmt.Println("Error sending email:", err)
+		return err
 	}
+
+	return nil
 }

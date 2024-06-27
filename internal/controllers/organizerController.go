@@ -12,6 +12,7 @@ import (
 	"github.com/asakshat/go-event-booking/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func SignUp(c *gin.Context) {
@@ -90,36 +91,73 @@ func VerifyEmail(c *gin.Context) {
 
 }
 
-// func ForgetPassword(c *gin.Context) {
-// 	var requestBody struct {
-// 		Email string `json:"email" binding:"required"`
-// 	}
-// 	if err := c.BindJSON(&requestBody); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-// 		return
-// 	}
-// 	var org models.Organizer
-// 	initializers.DB.First(&org, "email = ?", requestBody.Email)
-// 	if org.ID == 0 {
-// 		c.JSON(http.StatusNotFound, gin.H{"error": "The email does not exist in our database"})
-// 		return
-// 	}
+func ForgetPassword(c *gin.Context) {
+	var requestBody struct {
+		Email string `json:"email" binding:"required"`
+	}
+	if err := c.BindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	var org models.EmailVerification
+	initializers.DB.First(&org, "email = ?", requestBody.Email)
+	if org.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "The email does not exist in our database"})
+		return
+	}
 
-// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-// 		"sub": org.ID,
-// 		"exp": time.Now().Add(time.Hour * 24).Unix(),
-// 	})
-// 	secret := os.Getenv("JWT_SECRET")
-// 	signedToken, err := token.SignedString([]byte(secret))
-// 	if err != nil {
-// 		log.Printf("Error signing token: %v", err)
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to sign token"})
-// 		return
-// 	}
+	err := services.PasswordResetMail(org)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Password reset link sent successfully"})
 
-// 	resetLink := fmt.Sprintf("http://localhost:9000/reset-password?username=%s&token=%s", org.Username, signedToken)
+}
 
-// }
+func ChangePassword(c *gin.Context) {
+	var requestBody struct {
+		NewPassword string `json:"new_password" binding:"required"`
+		Token       string `json:"token" binding:"required"`
+		Email       string `json:"email" binding:"required"`
+	}
+	if err := c.BindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+	var org models.EmailVerification
+	initializers.DB.First(&org, "email = ?", requestBody.Email)
+	if org.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "The email does not exist in our database"})
+		return
+	}
+	if requestBody.Token != org.Token {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Token is invalid"})
+		return
+	}
+
+	var user models.Organizer
+	initializers.DB.First(&user, "email = ?", requestBody.Email)
+	if user.ID == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+	err := models.PasswordValidate(requestBody.NewPassword)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(requestBody.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+		return
+	}
+	user.PasswordHash = string(hash)
+	initializers.DB.Save(&user)
+	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
+
+}
 
 func Login(c *gin.Context) {
 	secret := os.Getenv("JWT_SECRET")

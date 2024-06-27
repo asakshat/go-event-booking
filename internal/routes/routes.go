@@ -11,6 +11,8 @@ func AuthRoutes(r *gin.Engine) {
 	r.POST("/api/signup", controllers.SignUp)
 	r.POST("/api/login", controllers.Login)
 	r.POST("/api/verify-email", controllers.VerifyEmail)
+	r.POST("/api/forgot-password", controllers.ForgetPassword)
+	r.POST("/api/reset-password", controllers.ChangePassword)
 
 	authRoutes := r.Group("/")
 	authRoutes.Use(middlewares.Authenticate())
