@@ -57,10 +57,24 @@ Post /api/logout
 Logs out user
 ```
 
-Post api/logged
+Post /api/logged
 
 ```
  Get the user details of the currently logged in user
+```
+
+POST /api/forgot-password
+
+```json
+	"email":"asakshat453@gmail.com" // sends an email with a link to change password
+```
+
+POST /api/reset-password
+
+```json
+  	"email":"asakshat453@gmail.com",
+	"new_password":"Megaman123!",
+	"token":"YourToken"
 ```
 
 ### Event Routes
@@ -123,6 +137,12 @@ GET /api/event
 
 ```
 Get all events
+```
+
+GET /api/event/events_by_organizer
+
+```
+Get events by specific user
 ```
 
 ### Ticket Routes
