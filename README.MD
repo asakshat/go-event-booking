@@ -16,11 +16,11 @@ The "Event Booking" project is designed to provide a platform for users to book 
 - [x] Post, Edit, and Delete functions
 - [x] Buying Tickets
 - [x] Sending QR through email for confirmation and validation
+- [x] Change email & password
 - [ ] Function to validate QR code
 
 ### Goals for v2
 
-- [ ] Change email & password
 - [ ] Setting early bird prices and normal prices
 - [ ] Admin panel for analytics (i.e table showing the information about bought tickets)
 
