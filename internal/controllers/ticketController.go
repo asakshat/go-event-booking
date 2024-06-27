@@ -24,7 +24,6 @@ func BuyTicket(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	fmt.Println(ticket)
 
 	token, err := services.GenerateToken()
 	if err != nil {

@@ -114,6 +114,23 @@ func ForgetPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Password reset link sent successfully"})
 
 }
+func GetEventsByOrganizer(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	var events models.Event
+	err := initializers.DB.Where("id = ?", userID).Preload("Organizer").Find(&events).Error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch events"})
+		return
+
+	}
+	c.JSON(http.StatusOK, gin.H{"events": events})
+
+}
 
 func ChangePassword(c *gin.Context) {
 	var requestBody struct {

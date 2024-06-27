@@ -36,6 +36,7 @@ func EventRoutes(r *gin.Engine) {
 		eventRoutes.DELETE("/delete_perm/:event_id", controllers.DeletePerm)
 
 		eventRoutes.PATCH("/undo-delete/:event_id", controllers.UndoDeleteEvent)
+		eventRoutes.GET("/events_by_organizer", controllers.GetEventsByOrganizer)
 	}
 }
 
