@@ -154,3 +154,9 @@ POST /api/ticket/:event_id
 "last_name":"M",
 "email":"asakshat453@gmail.com"
 ```
+
+POST /api/ticket/verify/\*token
+
+```
+verify the tickets
+```
