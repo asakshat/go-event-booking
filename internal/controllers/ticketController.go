@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -72,4 +73,34 @@ func BuyTicket(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Ticket bought successfully"})
+}
+func VerifyTicket(c *gin.Context) {
+	rawToken := c.Param("token")
+	ticketToken := strings.TrimPrefix(rawToken, "/")
+
+	var ticket models.Ticket
+	result := initializers.DB.Where("reference = ?", ticketToken).First(&ticket)
+	if result.Error != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Ticket not found"})
+		return
+	}
+
+	err := services.ValidateToken(ticketToken)
+	if err != nil {
+		log.Println("Error validating token:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	if ticket.Validated {
+		c.JSON(http.StatusConflict, gin.H{"error": "Ticket already validated"})
+		return
+	}
+	ticket.Validated = true
+	updateResult := initializers.DB.Save(&ticket)
+	if updateResult.Error != nil {
+		log.Println("Error updating ticket validation status:", updateResult.Error)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error updating ticket validation status"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Ticket validated successfully"})
 }

@@ -9,5 +9,6 @@ func GenerateQRCode(token string, filename string) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

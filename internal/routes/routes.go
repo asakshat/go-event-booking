@@ -42,5 +42,6 @@ func EventRoutes(r *gin.Engine) {
 
 func TicketRoutes(r *gin.Engine) {
 	r.POST("/api/ticket/:event_id", controllers.BuyTicket)
+	r.POST("/api/ticket/verify/*token", controllers.VerifyTicket)
 
 }

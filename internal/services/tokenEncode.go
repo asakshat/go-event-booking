@@ -24,19 +24,19 @@ func GenerateToken() (string, error) {
 	return signedToken, nil
 }
 
-func ValidateToken(signedToken string) (bool, error) {
+func ValidateToken(signedToken string) error {
 	parts := strings.Split(signedToken, ".")
 	if len(parts) != 2 {
-		return false, fmt.Errorf("invalid token format")
+		return fmt.Errorf("invalid token format: expected 2 parts, got %d", len(parts))
 	}
 	signature, err := base64.StdEncoding.DecodeString(parts[0])
 	if err != nil {
-		return false, err
+		return fmt.Errorf("failed to decode signature: %v", err)
 	}
 	hashed := sha256.Sum256([]byte(parts[1]))
 	err = rsa.VerifyPSS(initializers.PublicKey, crypto.SHA256, hashed[:], signature, nil)
 	if err != nil {
-		return false, err
+		return fmt.Errorf("signature verification failed: %v", err)
 	}
-	return true, nil
+	return nil
 }
