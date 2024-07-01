@@ -121,8 +121,8 @@ func GetEventsByOrganizer(c *gin.Context) {
 		return
 	}
 
-	var events models.Event
-	err := initializers.DB.Where("id = ?", userID).Preload("Organizer").Find(&events).Error
+	var events []models.Event
+	err := initializers.DB.Where("organizer_id = ?", userID).Preload("Organizer").Find(&events).Error
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch events"})
 		return
